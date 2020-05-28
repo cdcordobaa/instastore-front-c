@@ -17,6 +17,7 @@ export function Counter() {
   return (
     <div>
       <styles.Title>hola</styles.Title>
+      <styles.Button></styles.Button>
     </div>
   );
 }
