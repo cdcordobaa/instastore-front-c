@@ -16,7 +16,9 @@ const Button = styled.button`
   border: 2px solid ${(props) => props.theme.main};
 `;
 
-export const styles = {
+const styles = {
   Title,
   Button,
 };
+
+export default styles;
