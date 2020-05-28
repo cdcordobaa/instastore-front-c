@@ -1,22 +1,33 @@
 import React, { useState, useEffect } from "react";
-import GoogleMapReact from "google-map-react";
+import GoogleMapReact, {
+  Maps,
+  MapOptions,
+  Props as MapProps,
+} from "google-map-react";
+import MapMarker from "components/mapMarker/mapMarker";
+import GoogleMap from "components/googleMap/googleMap";
 
-class MapContainer extends React.Component {
-  render() {
-    return (
-      <div style={{ width: "100%", height: "1000px" }}>
-        <GoogleMapReact
-          bootstrapURLKeys={{
-            key: "AIzaSyDTVjqr36KTmbnCthKJrScY7xM6qIe37G4",
-            // libraries: ["places", "directions"],
-          }}
-          defaultZoom={11} // Supports DP, e.g 11.5
-          defaultCenter={{ lat: 1.3521, lng: 103.8198 }}
-          yesIWantToUseGoogleMapApiInternals={true}
-        ></GoogleMapReact>
-      </div>
-    );
-  }
-}
+const MapContainer: React.FC = () => {
+  const apiHasLoaded = (map: MapOptions, maps: Maps) => {
+    console.log("api loaded", map, maps);
+  };
+
+  const storePin = () => {
+    return <MapMarker lat={1.3521} lng={103.8198} text={"You"} />;
+  };
+
+  return (
+    <div style={{ width: "6rem", height: "10rem" }}>
+      <GoogleMap
+        defaultZoom={11}
+        defaultCenter={{ lat: 1.3521, lng: 103.8198 }}
+        yesIWantToUseGoogleMapApiInternals={true}
+        onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)}
+      >
+        {/* <MapMarker lat={1.3521} lng={103.8198} /> */}
+      </GoogleMap>
+    </div>
+  );
+};
 
 export default MapContainer;
