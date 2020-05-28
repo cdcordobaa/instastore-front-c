@@ -1,7 +1,7 @@
 import React from "react";
-import Home from "./containers/home";
+import Home from "containers/home";
 import { ThemeProvider } from "styled-components";
-import { theme } from "./themes/theme";
+import { theme } from "themes/theme";
 import "./App.css";
 
 const App: React.FC = () => {

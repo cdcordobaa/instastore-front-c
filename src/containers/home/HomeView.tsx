@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import styles from "./styled";
-import MapContainer from "components/mapWrapper/map";
+import MapContainer from "components/mapWrapper/mapWrapper";
 
 interface IHomeViewProps {
-  data: string;
+  storesList: Array<any>;
 }
 
-const HomeView = ({ data }: IHomeViewProps) => {
-  const dispatch = useDispatch();
-
+const HomeView = ({ storesList }: IHomeViewProps) => {
   return (
     <React.Fragment>
       <styles.Title>holi!@</styles.Title>
