@@ -1,5 +1,23 @@
 import styled from "styled-components";
 
+const PanelContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  width: 100%;
+`;
+
+const OptionsPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 450px;
+`;
+
+const Board = styled.div`
+  min-width: 250px;
+  flex-grow: 1;
+  width: auto;
+`;
 const Title = styled.h1`
   font-size: 1.5em;
   text-align: center;
@@ -19,6 +37,9 @@ const Button = styled.button`
 const styles = {
   Title,
   Button,
+  OptionsPanel,
+  PanelContainer,
+  Board,
 };
 
 export default styles;

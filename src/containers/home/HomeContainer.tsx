@@ -28,8 +28,8 @@ const HomeContainer = ({}: IHomeProps) => {
       storeName: "the house",
       isOpen: true,
       coordinates: {
-        latitude: 0.025,
-        longitude: 0.001,
+        latitude: 1.3521,
+        longitude: 103.8198,
       },
       nextDeliveryTime: 60,
     },
@@ -38,8 +38,8 @@ const HomeContainer = ({}: IHomeProps) => {
       storeName: "the house",
       isOpen: true,
       coordinates: {
-        latitude: 0.015,
-        longitude: 0.001,
+        latitude: 1.3521,
+        longitude: 103.81,
       },
       nextDeliveryTime: 60,
     },
