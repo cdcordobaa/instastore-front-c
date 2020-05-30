@@ -1,68 +1,56 @@
 /* eslint-disable no-use-before-define */
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
-export default function ComboBox(props) {
+interface IAutoCompleteFieldProps {
+  key: string;
+  value: string;
+  label: string;
+  onTyping: (
+    key: string,
+    value: string,
+    callback: (options: Array<string>) => void
+  ) => Promise<Array<string> | undefined>;
+  onSelection: (key: string, option: string) => void;
+}
+
+const AutoCompleteField: React.FC<IAutoCompleteFieldProps> = (
+  props: IAutoCompleteFieldProps
+) => {
   const [inputValue, setInputValue] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
-  const [options, setOptions] = useState([]);
-  const loaded = useRef(false);
+  const [options, setOptions] = useState<Array<string>>([]);
 
-  // Runs after clicking away from the input field or pressing 'enter'.
-  // GeocoderService helps us get the lng & lat given an address name.
-  //   onSelect = (value) => {
-  //     this.state.geoCoderService.geocode({ address: value }, (response) => {
-  //       const { location } = response[0].geometry;
-  //       this.props.addMarker(
-  //         location.lat(),
-  //         location.lng(),
-  //         this.props.markerName
-  //       );
-  //     });
-  //   };
+  const pupulteOptions = async (options) => {
+    console.log("resss", options);
+
+    setOptions(options);
+  };
 
   useEffect(() => {
     if (!(inputValue.length > 0)) {
       return undefined;
     }
-
-    if (!props.mapServices.autoCompleteService) {
-      return undefined;
+    if (typeof props.onTyping == "function") {
+      let populatedOptions = props.onTyping(
+        props.key,
+        inputValue,
+        pupulteOptions
+      );
     }
-    const searchQuery = {
-      input: inputValue,
-      fields: ["name"],
-    };
-    props.mapServices.autoCompleteService.getQueryPredictions(
-      searchQuery,
-      (response) => {
-        if (response) {
-          const dataSource = response.map((resp) => resp.description);
-          setOptions(dataSource);
-        }
-      }
-    );
-  }, [props.mapServices, inputValue]);
+  }, [inputValue]);
 
   useEffect(() => {
-    console.log("j yu", props);
-    if (!props.mapServices.geoCoderService) {
+    if (!selectedValue || !(selectedValue.length > 0)) {
       return undefined;
     }
-    const searchQuery = {
-      address: selectedValue,
-    };
-    props.mapServices.geoCoderService.geocode(searchQuery, (response) => {
-      const { location } = response[0].geometry;
-      console.log("response coors", response);
-      props.mapServices.map.center = { location };
-    });
+    props.onSelection(props.key, selectedValue);
   }, [selectedValue]);
 
   return (
     <Autocomplete
-      id="combo-box-demo"
+      id={`autoCompleteField-${props.key}`}
       options={options}
       getOptionLabel={(option) => option}
       value={selectedValue}
@@ -73,12 +61,13 @@ export default function ComboBox(props) {
         setOptions([]);
       }}
       onInputChange={(event: any, newInputValue: any) => {
-        console.log("val of input", newInputValue);
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} label="Combo box" variant="outlined" />
+        <TextField {...params} label={props.label} variant="outlined" />
       )}
     />
   );
-}
+};
+
+export default AutoCompleteField;

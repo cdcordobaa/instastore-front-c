@@ -7,7 +7,62 @@ interface IHomeProps {}
 const HomeContainer = ({}: IHomeProps) => {
   const dispatch = useDispatch();
 
-  const [mapServices, setMapServices] = useState({});
+  const [mapServices, setMapServices] = useState<any>({});
+
+  const [destinationObj, setDestinationObj] = useState({
+    name: "",
+    address: "",
+    address_two: "",
+    description: "",
+    country: "",
+    city: "",
+  });
+
+  const onTyping = async (
+    key: string,
+    value: string,
+    callback: (options: Array<string>) => void
+  ): Promise<Array<string> | undefined> => {
+    if (!mapServices.autoCompleteService) {
+      return undefined;
+    }
+    const searchQuery = {
+      input: value,
+      fields: ["name"],
+    };
+    mapServices.autoCompleteService.getQueryPredictions(
+      searchQuery,
+      (response) => {
+        if (response) {
+          const dataSource: Array<string> = response.map(
+            (resp) => resp.description as string
+          );
+          console.log("keeee", dataSource);
+          callback(dataSource);
+          return dataSource;
+        } else {
+          return undefined;
+        }
+      },
+      (error) => {
+        return undefined;
+      }
+    );
+  };
+
+  const onSelection = (key: string, option: string) => {
+    if (!mapServices.geoCoderService) {
+      return undefined;
+    }
+    const searchQuery = {
+      address: option,
+    };
+    mapServices.geoCoderService.geocode(searchQuery, (response) => {
+      const { location } = response[0].geometry;
+      console.log("response coors", response);
+      mapServices.map.center = { location };
+    });
+  };
 
   const setServices = (gServices: any) => {
     console.log("what", gServices);
@@ -61,6 +116,9 @@ const HomeContainer = ({}: IHomeProps) => {
       onApiLoad={setServices}
       mapServices={mapServices}
       storesList={fakeResponse}
+      onTyping={onTyping}
+      onSelection={onSelection}
+      destination={destinationObj}
     ></HomeView>
   );
 };
