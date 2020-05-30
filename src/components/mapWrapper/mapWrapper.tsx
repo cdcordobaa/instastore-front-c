@@ -1,69 +1,69 @@
 import React, { useState, useEffect } from "react";
-import GoogleMapReact, {
-  Maps,
-  MapOptions,
-  Props as MapProps,
-} from "google-map-react";
 import MapMarker from "components/mapMarker/mapMarker";
 import GoogleMap from "components/googleMap/googleMap";
+import { IMapCenter, IMarker, IGMapCoordinates } from "types/mapTypes";
 
 interface IMapWrapperProps {
-  markersList: any;
-  onApiLoad: (gServices) => any;
+  userMarker: IMarker;
+  storeMarkers: Array<IMarker>;
+  onApiLoad: (gServices) => void;
+  mapCenter: IMapCenter;
+  onMarkerMove: (location: IGMapCoordinates) => void;
+  zoom?: number;
 }
 
 const MapWrapper: React.FC<IMapWrapperProps> = ({
-  markersList,
+  userMarker,
+  storeMarkers,
   onApiLoad,
+  mapCenter,
+  onMarkerMove,
+  zoom,
 }: IMapWrapperProps) => {
-  const [gServicesObject, setGServicesObject] = useState({});
   const [mapOptions, setmapOptions] = useState({
-    center: [1.3521, 103.8198],
-    zoom: 9,
     draggable: true,
-
-    lat: 1.3521,
-    lng: 103.8198,
   });
+  const defaultZoom = 11;
+  const defaultHooverDistance = 50;
+  const [draggableMarker, setDraggableMarker] = useState<IMarker>(userMarker);
 
-  const onCircleInteraction = (childKey: any, childProps: any, mouse: any) => {
-    // function is just a stub to test callbacks
+  useEffect(() => {
+    setDraggableMarker(userMarker);
+  }, [userMarker]);
+
+  const onMarkerMoveStart = (childKey: any, childProps: any, mouse: any) => {
+    if (draggableMarker.id != childKey) {
+      return;
+    }
     setmapOptions({
       ...mapOptions,
       draggable: false,
+    });
+    setDraggableMarker({
+      ...draggableMarker,
+      coordinates: {
+        latitude: mouse.lat,
+        longitude: mouse.lng,
+      },
+    });
+  };
+  const onMarkerRelease = (childKey: any, childProps: any, mouse: any) => {
+    setmapOptions({ ...mapOptions, draggable: true });
+    onMarkerMove({
       lat: mouse.lat,
       lng: mouse.lng,
     });
-
-    console.log("onCircleInteraction called with", childKey, childProps, mouse);
-  };
-  const onCircleInteraction3 = (childKey, childProps, mouse) => {
-    setmapOptions({ ...mapOptions, draggable: true });
-    // function is just a stub to test callbacks
-    console.log("onCircleInteraction called with", childKey, childProps, mouse);
   };
 
-  const _onChange = ({ center, zoom }) => {
-    setmapOptions({
-      ...mapOptions,
-      center: center,
-      zoom: zoom,
-    });
-  };
+  const onChange = ({ center, zoom }) => {};
 
-  const _onChildMouseEnter = (key, childProps) => {
-    console.log("enter", key, childProps);
-  };
+  const onChildMouseEnter = (key, childProps) => {};
 
-  const _onChildMouseLeave = (key, childProps) => {
-    console.log("exited", key, childProps);
-  };
+  const onChildMouseLeave = (key, childProps) => {};
 
-  const _onClick = (value) => {
-    console.log("click", value);
-  };
+  const onClick = (value) => {};
 
-  const _distanceToMouse = (markerPos, mousePos, markerProps) => {
+  const distanceToMouse = (markerPos, mousePos, markerProps) => {
     const x = markerPos.x;
     const y = markerPos.y;
 
@@ -74,33 +74,18 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
   };
 
   const apiHasLoaded = ({ map, maps, ref }) => {
-    console.log("api loaded", map, maps, ref);
-    setGServicesObject({
-      autoCompleteService: new maps.places.AutocompleteService(),
-      placesService: new maps.places.PlacesService(map),
-      directionService: new maps.DirectionsService(),
-      geoCoderService: new maps.Geocoder(),
-      singaporeLatLng: new maps.LatLng(1.3521, 103.8198),
-    });
-
     onApiLoad({
-      map,
+      maps,
       autoCompleteService: new maps.places.AutocompleteService(),
       placesService: new maps.places.PlacesService(map),
       directionService: new maps.DirectionsService(),
       geoCoderService: new maps.Geocoder(),
     });
-
-    const place = maps.places.PlacesService(map);
 
     if (navigator && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((pos) => {
         const coords = pos.coords;
-        setmapOptions({
-          ...mapOptions,
-          lat: coords.latitude,
-          lng: coords.longitude,
-        });
+
         // maps.setCenter(pos);
         let mymap = new maps.Map();
         let center = new maps.LatLng(coords.latitude, coords.longitude);
@@ -114,43 +99,36 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
   };
 
   const Markers =
-    markersList &&
-    markersList.map((marker: any, index: any) => (
+    draggableMarker &&
+    storeMarkers &&
+    [draggableMarker, ...storeMarkers].map((marker: any, index: any) => (
       <MapMarker
-        // required props
         key={marker.id}
         lat={marker.coordinates.latitude}
         lng={marker.coordinates.longitude}
-        onChildClick={_onClick}
+        onClick={onClick}
       />
     ));
 
   return (
     <GoogleMap
-      center={{ lat: mapOptions.lat, lng: mapOptions.lng }}
-      defaultZoom={11}
-      defaultCenter={{ lat: 1.3521, lng: 103.8198 }}
+      center={mapCenter.center}
+      defaultZoom={zoom ? zoom : defaultZoom}
+      //defaultCenter={{ lat: 1.3521, lng: 103.8198 }}
       yesIWantToUseGoogleMapApiInternals={true}
       onGoogleApiLoaded={apiHasLoaded}
-      onChildMouseEnter={_onChildMouseEnter}
-      onChildMouseLeave={_onChildMouseLeave}
-      onClick={_onClick}
+      onChildMouseEnter={onChildMouseEnter}
+      onChildMouseLeave={onChildMouseLeave}
+      onClick={onClick}
       draggable={mapOptions.draggable}
-      onChange={_onChange}
-      onChildMouseDown={onCircleInteraction}
-      onChildMouseUp={onCircleInteraction3}
-      onChildMouseMove={onCircleInteraction}
-      hoverDistance={50}
-      distanceToMouse={_distanceToMouse}
+      onChange={onChange}
+      onChildMouseDown={onMarkerMoveStart}
+      onChildMouseUp={onMarkerRelease}
+      onChildMouseMove={onMarkerMoveStart}
+      hoverDistance={defaultHooverDistance}
+      distanceToMouse={distanceToMouse}
     >
-      {/* {Markers} */}
-      <MapMarker
-        // required props
-        key={1}
-        lat={mapOptions.lat}
-        lng={mapOptions.lng}
-        onChildClick={_onClick}
-      />
+      {Markers}
     </GoogleMap>
   );
 };
