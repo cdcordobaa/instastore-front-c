@@ -7,6 +7,17 @@ interface IHomeProps {}
 const HomeContainer = ({}: IHomeProps) => {
   const dispatch = useDispatch();
 
+  const [mapServices, setMapServices] = useState({});
+
+  const setServices = (gServices: any) => {
+    console.log("what", gServices);
+    setMapServices(gServices);
+  };
+
+  useEffect(() => {
+    console.log("the new thing is", mapServices);
+  }, [mapServices]);
+
   const fakeDataOject = {
     destination: {
       name: "city", // Name of the address given by user (required)
@@ -45,7 +56,13 @@ const HomeContainer = ({}: IHomeProps) => {
     },
   ];
 
-  return <HomeView storesList={fakeResponse}></HomeView>;
+  return (
+    <HomeView
+      onApiLoad={setServices}
+      mapServices={mapServices}
+      storesList={fakeResponse}
+    ></HomeView>
+  );
 };
 
 export default HomeContainer;

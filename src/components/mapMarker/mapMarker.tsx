@@ -11,14 +11,11 @@ const MapMarker = (props) => {
     ? { height: "100px", width: "20px" }
     : { height: "20px", width: "20px", color: "red" };
   return (
-    <div
-      style={{ width: "80px", height: "80px", background: "blue" }}
-      className="lookatme"
-    >
-      <AccessAlarm />
-      <ThreeDRotation />
+    <styles.MarkerPosCentered className="lookatme">
+      {/* <AccessAlarm />
+      <ThreeDRotation /> */}
       <h1 style={style}>aaaaaysh</h1>
-    </div>
+    </styles.MarkerPosCentered>
   );
 };
 export default MapMarker;

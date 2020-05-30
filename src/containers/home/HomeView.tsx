@@ -8,6 +8,7 @@ import AddIcon from "@material-ui/icons/Add";
 import EditIcon from "@material-ui/icons/Edit";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import NavigationIcon from "@material-ui/icons/Navigation";
+import AutoComplete from "components/autoComplete/autoComplete";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,9 +25,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface IHomeViewProps {
   storesList: Array<any>;
+  mapServices: any;
+  onApiLoad: (gServices) => any;
 }
 
-const HomeView = ({ storesList }: IHomeViewProps) => {
+const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
   const classes = useStyles();
 
   return (
@@ -34,24 +37,10 @@ const HomeView = ({ storesList }: IHomeViewProps) => {
       <styles.Title>holi!@</styles.Title>
       <styles.PanelContainer>
         <styles.OptionsPanel>
-          <div className={classes.root}>
-            <Fab color="primary" aria-label="add">
-              <AddIcon />
-            </Fab>
-            <Fab color="secondary" aria-label="edit">
-              <EditIcon />
-            </Fab>
-            <Fab variant="extended">
-              <NavigationIcon className={classes.extendedIcon} />
-              Navigate
-            </Fab>
-            <Fab disabled aria-label="like">
-              <FavoriteIcon />
-            </Fab>
-          </div>
+          <AutoComplete mapServices={mapServices}></AutoComplete>
         </styles.OptionsPanel>
         <styles.Board>
-          <Map markersList={storesList}></Map>
+          <Map markersList={storesList} onApiLoad={onApiLoad}></Map>
         </styles.Board>
       </styles.PanelContainer>
     </React.Fragment>

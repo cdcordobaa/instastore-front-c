@@ -9,10 +9,12 @@ import GoogleMap from "components/googleMap/googleMap";
 
 interface IMapWrapperProps {
   markersList: any;
+  onApiLoad: (gServices) => any;
 }
 
 const MapWrapper: React.FC<IMapWrapperProps> = ({
   markersList,
+  onApiLoad,
 }: IMapWrapperProps) => {
   const [gServicesObject, setGServicesObject] = useState({});
   const [mapOptions, setmapOptions] = useState({
@@ -24,7 +26,7 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
     lng: 103.8198,
   });
 
-  const onCircleInteraction = (childKey, childProps, mouse) => {
+  const onCircleInteraction = (childKey: any, childProps: any, mouse: any) => {
     // function is just a stub to test callbacks
     setmapOptions({
       ...mapOptions,
@@ -71,21 +73,49 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
     );
   };
 
-  const apiHasLoaded = (map: MapOptions, maps: any) => {
-    console.log("api loaded", map, maps);
-    // setGServicesObject({
-    //   maps,
-    //   autoCompleteService: new maps.places.AutocompleteService(),
-    //   // placesService: new maps.places.PlacesService(map),
-    //   directionService: new maps.DirectionsService(),
-    //   geoCoderService: new maps.Geocoder(),
-    //   singaporeLatLng: new maps.LatLng(1.3521, 103.8198),
-    // });
+  const apiHasLoaded = ({ map, maps, ref }) => {
+    console.log("api loaded", map, maps, ref);
+    setGServicesObject({
+      autoCompleteService: new maps.places.AutocompleteService(),
+      placesService: new maps.places.PlacesService(map),
+      directionService: new maps.DirectionsService(),
+      geoCoderService: new maps.Geocoder(),
+      singaporeLatLng: new maps.LatLng(1.3521, 103.8198),
+    });
+
+    onApiLoad({
+      map,
+      autoCompleteService: new maps.places.AutocompleteService(),
+      placesService: new maps.places.PlacesService(map),
+      directionService: new maps.DirectionsService(),
+      geoCoderService: new maps.Geocoder(),
+    });
+
+    const place = maps.places.PlacesService(map);
+
+    if (navigator && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const coords = pos.coords;
+        setmapOptions({
+          ...mapOptions,
+          lat: coords.latitude,
+          lng: coords.longitude,
+        });
+        // maps.setCenter(pos);
+        let mymap = new maps.Map();
+        let center = new maps.LatLng(coords.latitude, coords.longitude);
+        map.panTo(center);
+        // mymap;
+      });
+
+      let center = new maps.LatLng(4.918054735318825, -73.97925573532127);
+      map.panTo(center);
+    }
   };
 
   const Markers =
     markersList &&
-    markersList.map((marker, index) => (
+    markersList.map((marker: any, index: any) => (
       <MapMarker
         // required props
         key={marker.id}
@@ -97,10 +127,11 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
 
   return (
     <GoogleMap
+      center={{ lat: mapOptions.lat, lng: mapOptions.lng }}
       defaultZoom={11}
       defaultCenter={{ lat: 1.3521, lng: 103.8198 }}
       yesIWantToUseGoogleMapApiInternals={true}
-      onGoogleApiLoaded={({ map, maps }) => apiHasLoaded(map, maps)}
+      onGoogleApiLoaded={apiHasLoaded}
       onChildMouseEnter={_onChildMouseEnter}
       onChildMouseLeave={_onChildMouseLeave}
       onClick={_onClick}

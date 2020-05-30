@@ -10,6 +10,7 @@ const GoogleMap = ({ children, ...props }) => (
       bootstrapURLKeys={{
         key: process.env.REACT_APP_MAP_KEY || API_KEY,
         language: "en",
+        libraries: ["places", "directions"],
       }}
       {...props}
     >
