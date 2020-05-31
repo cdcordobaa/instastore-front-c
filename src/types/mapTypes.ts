@@ -23,3 +23,12 @@ export enum MarkerType {
   Store,
   User,
 }
+
+export interface gMapsServices {
+  maps: any;
+  autoCompleteService: any;
+  placesService: any;
+  directionService: any;
+  geoCoderService: any;
+  mapInitialLatLng?: any;
+}

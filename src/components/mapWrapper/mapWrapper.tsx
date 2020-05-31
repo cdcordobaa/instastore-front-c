@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import MapMarker from "components/mapMarker/mapMarker";
 import GoogleMap from "components/googleMap/googleMap";
-import { IMapCenter, IMarker, IGMapCoordinates } from "types/mapTypes";
+import {
+  IMapCenter,
+  IMarker,
+  IGMapCoordinates,
+  gMapsServices,
+} from "types/mapTypes";
 
 interface IMapWrapperProps {
   userMarker: IMarker;
   storeMarkers: Array<IMarker>;
-  onApiLoad: (gServices) => void;
+  onApiLoad: (gServices: gMapsServices) => void;
   mapCenter: IMapCenter;
   onMarkerMove: (location: IGMapCoordinates) => void;
   zoom?: number;
@@ -66,8 +71,6 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
   const distanceToMouse = (markerPos, mousePos, markerProps) => {
     const x = markerPos.x;
     const y = markerPos.y;
-
-    // it's just a simple example, you can tweak distance function as you wish
     return Math.sqrt(
       (x - mousePos.x) * (x - mousePos.x) + (y - mousePos.y) * (y - mousePos.y)
     );
@@ -81,21 +84,6 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
       directionService: new maps.DirectionsService(),
       geoCoderService: new maps.Geocoder(),
     });
-
-    if (navigator && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const coords = pos.coords;
-
-        // maps.setCenter(pos);
-        let mymap = new maps.Map();
-        let center = new maps.LatLng(coords.latitude, coords.longitude);
-        map.panTo(center);
-        // mymap;
-      });
-
-      let center = new maps.LatLng(4.918054735318825, -73.97925573532127);
-      map.panTo(center);
-    }
   };
 
   const Markers =
@@ -114,7 +102,6 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
     <GoogleMap
       center={mapCenter.center}
       defaultZoom={zoom ? zoom : defaultZoom}
-      //defaultCenter={{ lat: 1.3521, lng: 103.8198 }}
       yesIWantToUseGoogleMapApiInternals={true}
       onGoogleApiLoaded={apiHasLoaded}
       onChildMouseEnter={onChildMouseEnter}

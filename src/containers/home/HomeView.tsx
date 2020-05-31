@@ -7,13 +7,16 @@ import {
   IMarker,
   MarkerType,
   IGMapCoordinates,
+  gMapsServices,
 } from "types/mapTypes";
 import { TextField } from "@material-ui/core";
+import { IDestination } from "types/destinationTypes";
 
 export interface IHomeViewProps {
   storesList: Array<any>;
-  mapServices: any;
-  onApiLoad: (gServices) => any;
+  mapServices: gMapsServices;
+  onApiLoad: (gServices: gMapsServices) => void;
+  onDestinationSubmit: (destination: IDestination) => void;
 }
 
 enum AutoFieldType {
@@ -23,15 +26,15 @@ enum AutoFieldType {
 
 const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
   const [mapCenter, setMapCenter] = useState<IMapCenter>({
-    center: { lat: 1.3521, lng: 103.8198 },
+    center: { lat: 0, lng: 0 },
     name: "",
   });
   const [destMarkPost, setDestMarkPost] = useState<IMarker>({
     isDraggable: true,
     id: 0,
     coordinates: {
-      latitude: 1.3521,
-      longitude: 103.8198,
+      latitude: 0,
+      longitude: 0,
     },
     name: "You",
     type: MarkerType.User,
@@ -50,13 +53,26 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
     longitude: "",
   });
 
-  const fillInInfoFields = (geoCodeRespose) => {
+  useEffect(() => {
+    if (mapServices && mapServices.mapInitialLatLng) {
+      setMapCenter({
+        center: {
+          lat: mapServices.mapInitialLatLng.lat(),
+          lng: mapServices.mapInitialLatLng.lng(),
+        },
+        name: "",
+      });
+    }
+  }, [mapServices]);
+
+  const fillDestinationFields = (geoCodeRespose) => {
     const filterbyType = (type_tag: string) => {
       const value = geoCodeRespose.address_components.filter((part) =>
         part.types.includes(type_tag)
       );
       return value.length > 0 ? value[0].long_name : "";
     };
+
     let destination = {
       zip_code: filterbyType("postal_code"),
       country: filterbyType("country"),
@@ -68,41 +84,10 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
     };
 
     setDestinationObj({ ...destinationObj, ...destination });
-    console.log("dataa", destination, geoCodeRespose);
+    setAddressValue(geoCodeRespose.formatted_address);
   };
 
-  const onMapCenterTyping = async (
-    key: string,
-    value: string,
-    callback: (options: Array<string>) => void
-  ): Promise<Array<string> | undefined> => {
-    if (!mapServices.autoCompleteService) {
-      return undefined;
-    }
-    const searchQuery = {
-      input: value,
-      fields: ["name"],
-    };
-    mapServices.autoCompleteService.getQueryPredictions(
-      searchQuery,
-      (response) => {
-        if (response) {
-          const dataSource: Array<string> = response.map(
-            (resp) => resp.description as string
-          );
-          callback(dataSource);
-          return dataSource;
-        } else {
-          return undefined;
-        }
-      },
-      (error) => {
-        return undefined;
-      }
-    );
-  };
-
-  const onCenterSelection = (key: string, option: string) => {
+  const onCenterFieldSelection = (key: string, option: string) => {
     if (!mapServices.geoCoderService) {
       return undefined;
     }
@@ -125,45 +110,56 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
       }
 
       if (key === AutoFieldType.ADDRESS) {
-        fillInInfoFields(response[0]);
+        fillDestinationFields(response[0]);
       }
 
       setDestinationMarker(center);
     });
   };
 
-  const onAddressTyping = async (
+  const onAutoCompleFieldTyping = async (
     key: string,
     value: string,
     callback: (options: Array<string>) => void
   ): Promise<Array<string> | undefined> => {
-    if (!mapServices.maps) {
+    if (!mapServices.maps || !mapServices.autoCompleteService) {
       return undefined;
     }
-    const searchQuery = {
+
+    let searchQuery: any = {
       input: value,
-      location: new mapServices.maps.LatLng(
-        mapCenter.center.lat,
-        mapCenter.center.lng
-      ),
-      radius: 30000,
-      types: ["establishment", "street_address", "street_number", "route"],
     };
+
+    if (key === AutoFieldType.CENTER) {
+      searchQuery = {
+        ...searchQuery,
+        fields: ["name"],
+      };
+    }
+
+    if (key === AutoFieldType.ADDRESS) {
+      searchQuery = {
+        ...searchQuery,
+        location: new mapServices.maps.LatLng(
+          mapCenter.center.lat,
+          mapCenter.center.lng
+        ),
+        radius: 30000,
+        types: ["establishment", "street_address", "street_number", "route"],
+      };
+    }
+
     mapServices.autoCompleteService.getQueryPredictions(
       searchQuery,
       (response) => {
-        if (response) {
-          const dataSource: Array<string> = response.map(
-            (resp) => resp.description
-          );
-          callback(dataSource);
-          return dataSource;
-        }
-      },
-      (error) => {
-        return undefined;
+        const dataSource: Array<string> = response.map(
+          (resp) => resp.description
+        );
+        callback(dataSource);
+        return dataSource;
       }
     );
+
     return undefined;
   };
 
@@ -179,7 +175,7 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
 
   const onMarkerMove = (location: IGMapCoordinates) => {
     mapServices.geoCoderService.geocode({ location }, (response) => {
-      setAddressValue(response[0].formatted_address);
+      fillDestinationFields(response[0]);
     });
   };
 
@@ -192,16 +188,23 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
             id={AutoFieldType.CENTER}
             label={"NearBy Place or City"}
             value={mapCenter.name}
-            onTyping={onMapCenterTyping}
-            onSelection={onCenterSelection}
+            onTyping={onAutoCompleFieldTyping}
+            onSelection={onCenterFieldSelection}
           ></AutoCompleteField>
           <AutoCompleteField
             id={AutoFieldType.ADDRESS}
             label={"Address"}
             value={addressValue}
-            onTyping={onAddressTyping}
-            onSelection={onCenterSelection}
+            onTyping={onAutoCompleFieldTyping}
+            onSelection={onCenterFieldSelection}
           ></AutoCompleteField>
+
+          <TextField
+            autoComplete="off"
+            value={destinationObj.name}
+            label={"Name This Destination"}
+            variant="outlined"
+          />
           <TextField
             label={"Address Two"}
             value={destinationObj.address_two}

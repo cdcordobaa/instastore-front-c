@@ -1,17 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HomeView from "./HomeView";
+import { IDestination } from "types/destinationTypes";
 
 interface IHomeProps {}
 
 const HomeContainer = ({}: IHomeProps) => {
+  const defaultCenter = { lat: 1.3521, lng: 103.8198 };
   const dispatch = useDispatch();
 
   const [mapServices, setMapServices] = useState<any>({});
 
-  const setServices = (gServices: any) => {
-    console.log("what", gServices);
-    setMapServices(gServices);
+  const setGMapsServices = (gServices: any) => {
+    let center = new gServices.maps.LatLng(
+      defaultCenter.lat,
+      defaultCenter.lng
+    );
+
+    //This one could be dalayed but is not a promise, so setState inside again
+    if (navigator && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = pos.coords;
+          center = new gServices.maps.LatLng(coords.latitude, coords.longitude);
+          setMapServices({ ...gServices, mapInitialLatLng: center });
+        },
+        (error) => {
+          console.error("Cant Get Position", error);
+        }
+      );
+    }
+
+    setMapServices({ ...gServices, mapInitialLatLng: center });
   };
 
   useEffect(() => {
@@ -56,11 +76,13 @@ const HomeContainer = ({}: IHomeProps) => {
     },
   ];
 
+  const onDestinationSubmit = (destination: IDestination) => {};
   return (
     <HomeView
-      onApiLoad={setServices}
+      onApiLoad={setGMapsServices}
       mapServices={mapServices}
       storesList={fakeResponse}
+      onDestinationSubmit={onDestinationSubmit}
     ></HomeView>
   );
 };
