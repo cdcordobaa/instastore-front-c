@@ -1,4 +1,13 @@
 import styled from "styled-components";
+import {
+  TextField as MTextField,
+  InputAdornment,
+  Button as MButton,
+  Icon,
+} from "@material-ui/core";
+
+export const TextField = styled(MTextField)``;
+export const Button = styled(MButton)``;
 
 const PanelContainer = styled.div`
   display: flex;
@@ -11,6 +20,13 @@ const OptionsPanel = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 450px;
+  ${TextField} {
+    margin: 1rem 2.5rem;
+  }
+  ${Button} {
+    margin: 1rem 2.5rem;
+    max-width: 12rem;
+  }
 `;
 
 const Board = styled.div`
@@ -23,7 +39,7 @@ const Title = styled.h1`
   text-align: center;
   color: palevioletred;
 `;
-const Button = styled.button`
+const CustomButton = styled.button`
   font-size: 1em;
   margin: 1em;
   padding: 0.25em 1em;
@@ -36,10 +52,11 @@ const Button = styled.button`
 
 const styles = {
   Title,
-  Button,
+  CustomButton,
   OptionsPanel,
   PanelContainer,
   Board,
+  TextField,
 };
 
 export default styles;

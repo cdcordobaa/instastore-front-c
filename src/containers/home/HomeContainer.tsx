@@ -10,6 +10,7 @@ const HomeContainer = ({}: IHomeProps) => {
   const dispatch = useDispatch();
 
   const [mapServices, setMapServices] = useState<any>({});
+  const [locationLoaded, setLocationLoaded] = useState(false);
 
   const setGMapsServices = (gServices: any) => {
     let center = new gServices.maps.LatLng(
@@ -24,6 +25,7 @@ const HomeContainer = ({}: IHomeProps) => {
           const coords = pos.coords;
           center = new gServices.maps.LatLng(coords.latitude, coords.longitude);
           setMapServices({ ...gServices, mapInitialLatLng: center });
+          setLocationLoaded(true);
         },
         (error) => {
           console.error("Cant Get Position", error);
@@ -37,21 +39,6 @@ const HomeContainer = ({}: IHomeProps) => {
   useEffect(() => {
     console.log("the new thing is", mapServices);
   }, [mapServices]);
-
-  const fakeDataOject = {
-    destination: {
-      name: "city", // Name of the address given by user (required)
-      address: "cra 7 no 100", // Address captured (required)
-      address_two: "apto", //Additional details for the address (line apt, house number, etc)
-      description: "hey knock the door", //Instructions for the delivery
-      country: "Colombia", // Country code according to ISO-3166-1 (required)
-      city: "Bogota", // City name
-      state: "Bogota", // State name
-      zip_code: "11002",
-      latitude: 0, //number indicating the latitude of the address provided
-      longitude: 0, //number indicating the longitude of the address provided
-    },
-  };
 
   const fakeResponse = [
     {
@@ -76,13 +63,17 @@ const HomeContainer = ({}: IHomeProps) => {
     },
   ];
 
-  const onDestinationSubmit = (destination: IDestination) => {};
+  const onDestinationSubmit = (destination: IDestination) => {
+    console.log("the submit is, ", destination);
+  };
+
   return (
     <HomeView
       onApiLoad={setGMapsServices}
       mapServices={mapServices}
       storesList={fakeResponse}
       onDestinationSubmit={onDestinationSubmit}
+      locationLoaded={locationLoaded}
     ></HomeView>
   );
 };

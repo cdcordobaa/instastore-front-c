@@ -1,7 +1,22 @@
 import React, { useState, useEffect } from "react";
 import Map from "components/mapWrapper/mapWrapper";
-import styles from "./styled";
 import AutoCompleteField from "components/autoComplete/autoComplete";
+import {
+  TextField as MTexField,
+  InputAdornment,
+  Button as MButton,
+  Icon,
+} from "@material-ui/core";
+import {
+  DynamicFeed,
+  AddAlert,
+  Apartment,
+  Public,
+  LineStyle,
+  LocationCity,
+  Dialpad,
+  Send,
+} from "@material-ui/icons";
 import {
   IMapCenter,
   IMarker,
@@ -9,14 +24,15 @@ import {
   IGMapCoordinates,
   gMapsServices,
 } from "types/mapTypes";
-import { TextField } from "@material-ui/core";
 import { IDestination } from "types/destinationTypes";
+import styles, { TextField, Button } from "./styled";
 
 export interface IHomeViewProps {
   storesList: Array<any>;
   mapServices: gMapsServices;
   onApiLoad: (gServices: gMapsServices) => void;
   onDestinationSubmit: (destination: IDestination) => void;
+  locationLoaded: boolean;
 }
 
 enum AutoFieldType {
@@ -24,7 +40,13 @@ enum AutoFieldType {
   ADDRESS = "Address",
 }
 
-const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
+const HomeView = ({
+  storesList,
+  mapServices,
+  onApiLoad,
+  locationLoaded,
+  onDestinationSubmit,
+}: IHomeViewProps) => {
   const [mapCenter, setMapCenter] = useState<IMapCenter>({
     center: { lat: 0, lng: 0 },
     name: "",
@@ -39,8 +61,9 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
     name: "You",
     type: MarkerType.User,
   });
+
   const [addressValue, setAddressValue] = useState("");
-  const [destinationObj, setDestinationObj] = useState({
+  const [destinationObj, setDestinationObj] = useState<IDestination>({
     name: "",
     address: "",
     address_two: "",
@@ -49,21 +72,25 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
     city: "",
     zip_code: "",
     state: "",
-    latitude: "",
-    longitude: "",
+    latitude: 0,
+    longitude: 0,
   });
 
   useEffect(() => {
     if (mapServices && mapServices.mapInitialLatLng) {
+      const center = {
+        lat: mapServices.mapInitialLatLng.lat(),
+        lng: mapServices.mapInitialLatLng.lng(),
+      };
       setMapCenter({
-        center: {
-          lat: mapServices.mapInitialLatLng.lat(),
-          lng: mapServices.mapInitialLatLng.lng(),
-        },
+        center,
         name: "",
       });
+      if (locationLoaded) {
+        setDestinationMarker(center);
+      }
     }
-  }, [mapServices]);
+  }, [mapServices, locationLoaded]);
 
   const fillDestinationFields = (geoCodeRespose) => {
     const filterbyType = (type_tag: string) => {
@@ -152,11 +179,13 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
     mapServices.autoCompleteService.getQueryPredictions(
       searchQuery,
       (response) => {
-        const dataSource: Array<string> = response.map(
-          (resp) => resp.description
-        );
-        callback(dataSource);
-        return dataSource;
+        if (response) {
+          const dataSource: Array<string> = response.map(
+            (resp) => resp.description
+          );
+          callback(dataSource);
+          return dataSource;
+        }
       }
     );
 
@@ -179,6 +208,18 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
     });
   };
 
+  const onTextValueChange = (field: string) => (event) => {
+    console.log("eeeev", event);
+    setDestinationObj({
+      ...destinationObj,
+      [field]: event.target.value,
+    });
+  };
+
+  const submitForm = (event) => {
+    console.log("ug?", destinationObj);
+    onDestinationSubmit(destinationObj);
+  };
   return (
     <React.Fragment>
       <styles.Title>holi!@</styles.Title>
@@ -202,37 +243,122 @@ const HomeView = ({ storesList, mapServices, onApiLoad }: IHomeViewProps) => {
           <TextField
             autoComplete="off"
             value={destinationObj.name}
+            onChange={onTextValueChange("name")}
             label={"Name This Destination"}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <DynamicFeed />
+                </InputAdornment>
+              ),
+            }}
+            required
+            error={addressValue !== "" && destinationObj.city === ""}
+            helperText="This can't be empty"
           />
+
+          <TextField
+            label={"Add DesCription"}
+            value={destinationObj.description}
+            onChange={onTextValueChange("description")}
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AddAlert />
+                </InputAdornment>
+              ),
+            }}
+          />
+
           <TextField
             label={"Address Two"}
             value={destinationObj.address_two}
+            onChange={onTextValueChange("address_two")}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Apartment />
+                </InputAdornment>
+              ),
+            }}
           />
+
           <TextField
+            autoComplete="off"
             label={"Country"}
+            onChange={onTextValueChange("country")}
             value={destinationObj.country}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Public />
+                </InputAdornment>
+              ),
+            }}
+            required
+            error={addressValue !== "" && destinationObj.city === ""}
+            helperText="This can't be empty"
           />
+
           <TextField
             autoComplete="off"
             value={destinationObj.state}
+            onChange={onTextValueChange("state")}
             label={"State"}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LineStyle />
+                </InputAdornment>
+              ),
+            }}
           />
+
           <TextField
             autoComplete="off"
             value={destinationObj.city}
+            onChange={onTextValueChange("city")}
             label={"City"}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LocationCity />
+                </InputAdornment>
+              ),
+            }}
+            required
+            error={addressValue !== "" && destinationObj.city === ""}
+            helperText="This can't be empty"
           />
+
           <TextField
             autoComplete="off"
-            value={destinationObj["zip_code"]}
+            value={destinationObj.zip_code}
+            onChange={onTextValueChange("zip_code")}
             label={"Zip Code"}
             variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Dialpad />
+                </InputAdornment>
+              ),
+            }}
           />
+          <Button
+            variant="contained"
+            color="primary"
+            endIcon={<Send />}
+            onClick={submitForm}
+          >
+            Show Me!
+          </Button>
         </styles.OptionsPanel>
         <styles.Board>
           <Map
