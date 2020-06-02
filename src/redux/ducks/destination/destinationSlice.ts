@@ -4,8 +4,8 @@ import { IDestination, IFilter, IOrderItem } from "types/destinationTypes";
 
 import { initialState } from "./destinationInitialstate";
 
-export const counterSlice = createSlice({
-  name: "counter",
+export const destinationSlice = createSlice({
+  name: "destination",
   initialState,
   reducers: {
     setDestination: (state, action: PayloadAction<IDestination>) => {
@@ -56,7 +56,7 @@ export const {
   deleteItemFromOrder,
   somethingFailed,
   failingAcknowledgement,
-} = counterSlice.actions;
+} = destinationSlice.actions;
 
 export const sentDestinationToApi = (destination: IDestination): AppThunk => (
   dispatch
@@ -72,4 +72,4 @@ export const sentDestinationToApi = (destination: IDestination): AppThunk => (
 
 export const selectDestination = (state: RootState) => state.destination;
 
-export default counterSlice.reducer;
+export default destinationSlice.reducer;

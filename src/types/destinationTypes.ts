@@ -29,3 +29,8 @@ export interface IDestinationDetails {
   filters: IFilter;
   error: Error | null;
 }
+export interface APIDestinationResponse {
+  results: IDestination;
+  info: string;
+  error: string;
+}

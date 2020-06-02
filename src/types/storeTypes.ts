@@ -10,3 +10,18 @@ export interface IStore {
   state: string;
   country: string;
 }
+
+export interface APIStoreResponse {
+  results: IStore[];
+  info: string;
+  error: string;
+}
+
+export interface ISToreState {
+  error: null | Error;
+  cityStores: IStore[] | undefined;
+  nearest: {
+    distance: IStore | undefined;
+    time: IStore | undefined;
+  };
+}
