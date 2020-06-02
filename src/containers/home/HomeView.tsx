@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Map from "components/mapWrapper/mapWrapper";
-import {
-  TextField as MTexField,
-  InputAdornment,
-  Button as MButton,
-  Icon,
-} from "@material-ui/core";
+import { InputAdornment } from "@material-ui/core";
 import {
   DynamicFeed,
   AddAlert,
@@ -24,8 +18,9 @@ import {
   gMapsServices,
 } from "types/mapTypes";
 import { IDestination } from "types/destinationTypes";
-import styles, { TextField, Button } from "./styled";
+import Map from "components/mapWrapper/mapWrapper";
 import AutoCompleteField from "components/autoComplete/autoComplete";
+import styles, { TextField, Button } from "./styled";
 
 export interface IHomeViewProps {
   storesList: Array<any>;

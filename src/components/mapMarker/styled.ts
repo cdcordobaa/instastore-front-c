@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+interface MarkerProps {
+  size: number;
+  hoover: boolean;
+}
 const MarkerPos = styled.div`
   position: absolute;
   display: flex;
@@ -14,24 +18,29 @@ const MarkerPos = styled.div`
   background: red;
   color: yellow;
 `;
-const K_SIZE = 220;
 
-const MarkerPosCentered = styled.div`
+const MarkerPosCentered = styled.div<MarkerProps>`
   position: absolute;
-  width: ${200};
-  height: ${200};
-  left: ${-200 / 2};
-  top: ${-200 / 2};
+  width: ${(props) => props.size || 1}rem;
+  height: ${(props) => props.size || 1}rem;
+  left: ${(props) => -props.size / 2 || 1}rem;
+  top: ${(props) => -props.size / 2 || 1}rem;
 
-  border: "5px solid #f44336";
+  border: 1px solid black;
   border-radius: 50%;
   background-color: white;
   text-align: center;
-  color: "#3f51b5";
+  background: palevioletred;
   font-size: 16;
   font-weight: bold;
   padding: 4;
   cursor: pointer;
+  svg {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const styles = {
