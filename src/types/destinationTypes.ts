@@ -10,3 +10,22 @@ export interface IDestination {
   latitude: number;
   longitude: number;
 }
+
+export interface IOrderItem {
+  name: string;
+  quantity: number;
+}
+export enum SearchNearestBy {
+  distance,
+  time,
+}
+export interface IFilter {
+  searchBy: SearchNearestBy;
+  searchOpen: boolean;
+}
+export interface IDestinationDetails {
+  destination: IDestination;
+  items?: Array<IOrderItem>;
+  filters: IFilter;
+  error: Error | null;
+}

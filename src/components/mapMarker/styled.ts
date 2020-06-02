@@ -4,20 +4,6 @@ interface MarkerProps {
   size: number;
   hoover: boolean;
 }
-const MarkerPos = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: auto;
-  height: auto;
-  border-radius: 50%;
-  left: -10px;
-  top: -10px;
-  border: 1px solid blue;
-  background: red;
-  color: yellow;
-`;
 
 const MarkerPosCentered = styled.div<MarkerProps>`
   position: absolute;
@@ -44,7 +30,6 @@ const MarkerPosCentered = styled.div<MarkerProps>`
 `;
 
 const styles = {
-  MarkerPos,
   MarkerPosCentered,
 };
 

@@ -1,50 +1,75 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "redux/store";
+import { IDestination, IFilter, IOrderItem } from "types/destinationTypes";
 
-interface CounterState {
-  value: number;
-}
-
-const initialState: CounterState = {
-  value: 0,
-};
+import { initialState } from "./destinationInitialstate";
 
 export const counterSlice = createSlice({
   name: "counter",
   initialState,
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1;
+    setDestination: (state, action: PayloadAction<IDestination>) => {
+      state.destination = action.payload;
     },
-    decrement: (state) => {
-      state.value -= 1;
+    setFilters: (state, action: PayloadAction<IFilter>) => {
+      state.filters = action.payload;
     },
     // Use the PayloadAction type to declare the contents of `action.payload`
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    addItemToOrder: (state, action: PayloadAction<IOrderItem>) => {
+      let items = state.items || [];
+      let alreadyThere = items.findIndex(
+        (elem) => elem.name === action.payload.name
+      );
+      state.items =
+        alreadyThere >= 0
+          ? [
+              ...items.slice(0, alreadyThere),
+              action.payload,
+              ...items.slice(alreadyThere),
+            ]
+          : [...items, action.payload];
+    },
+    deleteItemFromOrder: (state, action: PayloadAction<IOrderItem>) => {
+      let items = state.items || [];
+      let alreadyThere = items.findIndex(
+        (elem) => elem.name === action.payload.name
+      );
+      state.items =
+        alreadyThere >= 0
+          ? [...items.slice(0, alreadyThere), ...items.slice(alreadyThere + 1)]
+          : state.items;
+    },
+    somethingFailed(state, action: PayloadAction<Error>) {
+      state.error = action.payload;
+      console.info("redux state not modified");
+    },
+    failingAcknowledgement(state) {
+      state.error = null;
     },
   },
 });
 
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const {
+  setDestination,
+  setFilters,
+  addItemToOrder,
+  deleteItemFromOrder,
+  somethingFailed,
+  failingAcknowledgement,
+} = counterSlice.actions;
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched
-export const incrementAsync = (amount: number): AppThunk => (dispatch) => {
-  setTimeout(() => {
-    dispatch(incrementByAmount(amount));
-  }, 1000);
+export const sentDestinationToApi = (destination: IDestination): AppThunk => (
+  dispatch
+) => {
+  try {
+    dispatch(setDestination(destination));
+    dispatch(failingAcknowledgement());
+  } catch (err) {
+    console.error(`No calls were made ${err}`);
+    dispatch(somethingFailed(err));
+  }
 };
 
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectCount = (state: RootState) => state.destination.value;
+export const selectDestination = (state: RootState) => state.destination;
 
 export default counterSlice.reducer;
