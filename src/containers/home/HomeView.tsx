@@ -21,9 +21,11 @@ import { IDestination } from "types/destinationTypes";
 import Map from "components/mapWrapper/mapWrapper";
 import AutoCompleteField from "components/autoComplete/autoComplete";
 import styles, { TextField, Button } from "./styled";
+import { IStore } from "types/storeTypes";
 
 export interface IHomeViewProps {
-  storesList: Array<any>;
+  destination: IDestination;
+  storesList: Array<IStore>;
   mapServices: gMapsServices;
   onApiLoad: (gServices: gMapsServices) => void;
   onDestinationSubmit: (destination: IDestination) => void;
@@ -36,6 +38,7 @@ enum AutoFieldType {
 }
 
 const HomeView = ({
+  destination,
   storesList,
   mapServices,
   onApiLoad,
@@ -56,18 +59,9 @@ const HomeView = ({
     name: "You",
     type: MarkerType.User,
   });
-  const [destinationObj, setDestinationObj] = useState<IDestination>({
-    name: "",
-    address: "",
-    address_two: "",
-    description: "",
-    country: "",
-    city: "",
-    zip_code: "",
-    state: "",
-    latitude: 0,
-    longitude: 0,
-  });
+  const [destinationObj, setDestinationObj] = useState<IDestination>(
+    destination
+  );
   const [addressValue, setAddressValue] = useState("");
 
   useEffect(() => {

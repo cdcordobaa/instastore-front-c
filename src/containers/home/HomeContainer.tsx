@@ -2,12 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HomeView from "./HomeView";
 import { IDestination } from "types/destinationTypes";
+import { RootState } from "redux/store";
+import { IStore } from "types/storeTypes";
+import { nearestStore } from "redux/ducks/stores/storesSlice";
 
 interface IHomeProps {}
 
 const HomeContainer = ({}: IHomeProps) => {
   const defaultCenter = { lat: 1.3521, lng: 103.8198 };
   const dispatch = useDispatch();
+  const destination: IDestination = useSelector(
+    (state: RootState) => state.destination.destination
+  );
+  const stores: Array<IStore> =
+    useSelector((state: RootState) => state.stores.cityStores) || [];
 
   const [mapServices, setMapServices] = useState<any>({});
   const [locationLoaded, setLocationLoaded] = useState(false);
@@ -32,7 +40,6 @@ const HomeContainer = ({}: IHomeProps) => {
         }
       );
     }
-
     setMapServices({ ...gServices, mapInitialLatLng: center });
   };
 
@@ -40,38 +47,17 @@ const HomeContainer = ({}: IHomeProps) => {
     console.log("the new thing is", mapServices);
   }, [mapServices]);
 
-  const fakeResponse = [
-    {
-      storeId: "25",
-      storeName: "the house",
-      isOpen: true,
-      coordinates: {
-        latitude: 1.3521,
-        longitude: 103.8198,
-      },
-      nextDeliveryTime: 60,
-    },
-    {
-      storeId: "26",
-      storeName: "the house",
-      isOpen: true,
-      coordinates: {
-        latitude: 1.3521,
-        longitude: 103.81,
-      },
-      nextDeliveryTime: 60,
-    },
-  ];
-
   const onDestinationSubmit = (destination: IDestination) => {
     console.log("the submit is, ", destination);
+    dispatch(nearestStore(destination));
   };
 
   return (
     <HomeView
       onApiLoad={setGMapsServices}
       mapServices={mapServices}
-      storesList={fakeResponse}
+      destination={destination}
+      storesList={stores || []}
       onDestinationSubmit={onDestinationSubmit}
       locationLoaded={locationLoaded}
     ></HomeView>

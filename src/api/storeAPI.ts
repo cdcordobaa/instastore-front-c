@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { IStore, APIStoreResponse } from "types/storeTypes";
 import { IDestinationDetails } from "types/destinationTypes";
 
-const serviceEndpoint = "https://localhost:3001";
+const serviceEndpoint = "http://localhost:3001";
 const storesURI = "/stores";
 
 export async function getNearestStore(destination: IDestinationDetails) {
