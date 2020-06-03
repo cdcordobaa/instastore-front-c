@@ -8,11 +8,12 @@ import {
 } from "@material-ui/core";
 
 export const TextField = styled(MTextField)``;
-export const Button = styled(MButton)``;
 export const InputAdornment = styled(MInputAdornment)``;
 export const FormControlLabel = styled(MFormControlLabel)``;
-
 export const Switch = styled(MSwitch)``;
+export const Button = styled(MButton)`
+  background: palevioletred;
+`;
 
 const AutoCompleteFieldWraper = styled.div``;
 const PanelContainer = styled.div`
@@ -99,6 +100,39 @@ const MapContainer = styled.div`
   overflow: hidden;
 `;
 
+const ModalContent = styled.div`
+  display: flex;
+  background: white;
+  margin: 5rem auto;
+  height: 20rem;
+  width: 35rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  /* //decoration */
+  border-radius: 41px 41px 41px 41px;
+  -moz-border-radius: 41px 41px 41px 41px;
+  -webkit-border-radius: 41px 41px 41px 41px;
+  border: 3px solid palevioletred;
+  -webkit-box-shadow: 0px 40px 30px 15px rgba(0, 0, 0, 0.52);
+  -moz-box-shadow: 0px 40px 30px 15px rgba(0, 0, 0, 0.52);
+  box-shadow: 0px 40px 30px 15px rgba(0, 0, 0, 0.52);
+  overflow: hidden;
+  h2 {
+    max-width: 25rem;
+    color: palevioletred;
+    font-weight: 600;
+    font-size: 1.6rem;
+  }
+  h3 {
+    max-width: 25rem;
+    font-size: 1.2rem;
+  }
+  :focus {
+    outline: none;
+  }
+`;
+
 const styles = {
   Title,
   OptionsPanel,
@@ -108,6 +142,7 @@ const styles = {
   MapContainer,
   AutoCompleteFieldWraper,
   HelperLabel,
+  ModalContent,
 };
 
 export default styles;

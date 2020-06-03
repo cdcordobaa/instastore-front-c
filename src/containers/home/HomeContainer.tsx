@@ -4,7 +4,7 @@ import HomeView from "./HomeView";
 import { IDestination, SearchNearestBy } from "types/destinationTypes";
 import { RootState } from "redux/store";
 import { IStore } from "types/storeTypes";
-import { nearestStore } from "redux/ducks/stores/storesSlice";
+import { nearestStore, storeByCity } from "redux/ducks/stores/storesSlice";
 import { sentDestinationToApi } from "redux/ducks/destination/destinationSlice";
 
 interface IHomeProps {}
@@ -60,6 +60,13 @@ const HomeContainer = ({}: IHomeProps) => {
     dispatch(nearestStore(destination));
   };
 
+  const getAllStoresInCity = (city: string) => {
+    if (city === undefined || city === "") {
+      return;
+    }
+    dispatch(storeByCity(city));
+  };
+
   return (
     <HomeView
       onApiLoad={setGMapsServices}
@@ -69,6 +76,7 @@ const HomeContainer = ({}: IHomeProps) => {
       storesList={stores || []}
       onDestinationSubmit={onDestinationSubmit}
       locationLoaded={locationLoaded}
+      getAllStoresInCity={getAllStoresInCity}
     ></HomeView>
   );
 };

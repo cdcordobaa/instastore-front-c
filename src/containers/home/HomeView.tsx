@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { InputAdornment } from "@material-ui/core";
 import {
   IMapCenter,
   IMarker,
@@ -9,10 +8,10 @@ import {
 } from "types/mapTypes";
 import { IDestination } from "types/destinationTypes";
 import Map from "components/mapWrapper/mapWrapper";
-import AutoCompleteField from "components/autoComplete/autoComplete";
-import styles, { TextField, Button } from "./styled";
+import styles, { Button } from "./styled";
 import { IStore } from "types/storeTypes";
 import { TextFieldsFormHelper, LocalizationFindersHelper } from "./formHelper";
+import { Modal } from "@material-ui/core";
 
 export interface IHomeViewProps {
   destination: IDestination;
@@ -20,6 +19,7 @@ export interface IHomeViewProps {
   storesList: Array<IStore>;
   mapServices: gMapsServices;
   onApiLoad: (gServices: gMapsServices) => void;
+  getAllStoresInCity: (city: string) => void;
   onDestinationSubmit: (destination: IDestination) => void;
   locationLoaded: boolean;
 }
@@ -37,6 +37,7 @@ const HomeView = ({
   onApiLoad,
   locationLoaded,
   onDestinationSubmit,
+  getAllStoresInCity,
 }: IHomeViewProps) => {
   const [mapCenter, setMapCenter] = useState<IMapCenter>({
     center: { lat: 0, lng: 0 },
@@ -57,6 +58,7 @@ const HomeView = ({
     destination
   );
   const [addressValue, setAddressValue] = useState("");
+  const [openModal, setOpenModal] = React.useState(false);
 
   useEffect(() => {
     if (mapServices && mapServices.mapInitialLatLng) {
@@ -64,13 +66,24 @@ const HomeView = ({
         lat: mapServices.mapInitialLatLng.lat(),
         lng: mapServices.mapInitialLatLng.lng(),
       };
-      setMapCenter({
-        center,
-        name: "",
-      });
+      let name = "";
       if (locationLoaded) {
         setDestinationMarker(center);
+        mapServices.geoCoderService.geocode(
+          { location: center },
+          (response) => {
+            name = response[0].formatted_address.split(",").slice(1).toString();
+            setMapCenter({
+              center,
+              name,
+            });
+          }
+        );
       }
+      setMapCenter({
+        center,
+        name,
+      });
     }
   }, [mapServices, locationLoaded]);
 
@@ -269,9 +282,25 @@ const HomeView = ({
     );
   };
 
+  const validateDestination = (destination: IDestination) => {
+    const ignoreKeys = ["address_two", "description"];
+    let valid = true;
+    for (let key in destination) {
+      valid =
+        valid && (ignoreKeys.includes(key) ? true : destination[key] !== "");
+    }
+    return valid;
+  };
+
   const submitForm = (event) => {
+    const isValid = validateDestination(destinationObj);
+    if (!isValid) {
+      setOpenModal(!isValid);
+      return;
+    }
     onDestinationSubmit(destinationObj);
   };
+
   return (
     <React.Fragment>
       <styles.Title>holi!@</styles.Title>
@@ -288,11 +317,28 @@ const HomeView = ({
               onMarkerMove={onMarkerMove}
             ></Map>
           </styles.MapContainer>
-          <Button variant="contained" color="secondary" onClick={() => {}}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => getAllStoresInCity(mapCenter.name.split(",")[0])}
+          >
             Show me stores in this city
           </Button>
         </styles.Board>
       </styles.PanelContainer>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <styles.ModalContent>
+          <h2>Ooops... Something did breake</h2>
+          <h3>Destination information is not valid, please check the fields</h3>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setOpenModal(false)}
+          >
+            sure, i will!
+          </Button>
+        </styles.ModalContent>
+      </Modal>
     </React.Fragment>
   );
 };

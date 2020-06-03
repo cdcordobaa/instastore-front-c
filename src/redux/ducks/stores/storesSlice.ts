@@ -4,7 +4,7 @@ import { AppThunk, RootState, store } from "redux/store";
 import { initialState } from "./storesInitialstate";
 import { IStore, APIStoreResponse } from "types/storeTypes";
 import { IDestination, IDestinationDetails } from "types/destinationTypes";
-import { getNearestStore } from "api/storeAPI";
+import { getNearestStore, getStoresInCity } from "api/storeAPI";
 
 export const storesSlice = createSlice({
   name: "stores",
@@ -58,6 +58,21 @@ export const nearestStore = (destination: IDestination): AppThunk => async (
     let nearest: APIStoreResponse = await getNearestStore(destDetails);
 
     dispatch(setStoresNearestDistance(nearest.results[0]));
+    dispatch(failingAcknowledgement());
+  } catch (err) {
+    console.error(`No calls were made ${err}`);
+    dispatch(somethingFailed(err));
+  }
+};
+
+export const storeByCity = (city: string): AppThunk => async (
+  dispatch,
+  getState
+) => {
+  try {
+    let stores: APIStoreResponse = await getStoresInCity(city);
+
+    dispatch(setStoresByCity(stores.results));
     dispatch(failingAcknowledgement());
   } catch (err) {
     console.error(`No calls were made ${err}`);
