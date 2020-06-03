@@ -51,7 +51,7 @@ const HomeContainer = ({}: IHomeProps) => {
   };
 
   useEffect(() => {
-    console.log("the new thing is", mapServices);
+    console.log("the new map service is", mapServices);
   }, [mapServices]);
 
   const onDestinationSubmit = (destination: IDestination) => {

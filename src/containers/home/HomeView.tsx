@@ -109,9 +109,14 @@ const HomeView = ({
         longitude: nearest.longitude,
       },
       name: nearest.name,
-      type: MarkerType.Distance,
+      type: MarkerType.Distance, // only suported for the back now
     };
 
+    if (nearestMarker) storesMarkers.push(nearestMarker);
+    setStoreMarkPos(storesMarkers);
+  }, [storesList, nearest]);
+
+  useEffect(() => {
     const destMarker = {
       isDraggable: true,
       id: 0,
@@ -122,11 +127,8 @@ const HomeView = ({
       name: destination.name,
       type: MarkerType.User,
     };
-
-    if (nearestMarker) storesMarkers.push(nearestMarker);
-    setStoreMarkPos(storesMarkers);
     setDestMarkPost(destMarker);
-  }, [storesList, nearest, destination]);
+  }, [destination]);
 
   const fillDestinationObj = (geoCodeRespose) => {
     const filterbyType = (type_tag: string) => {
@@ -191,7 +193,6 @@ const HomeView = ({
     if (!mapServices.maps || !mapServices.autoCompleteService) {
       return undefined;
     }
-    console.log("uyyy");
     let searchQuery: any = {
       input: value,
     };
@@ -303,7 +304,7 @@ const HomeView = ({
 
   return (
     <React.Fragment>
-      <styles.Title>holi!@</styles.Title>
+      <styles.Title>@Go Nuts!@</styles.Title>
       <styles.PanelContainer>
         <styles.OptionsPanel>{textFieldsForm()}</styles.OptionsPanel>
         <styles.Board>

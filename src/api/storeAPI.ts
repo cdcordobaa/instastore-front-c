@@ -25,7 +25,7 @@ export async function getNearestStore(destination: IDestinationDetails) {
 }
 
 export async function getStoresInCity(city: string) {
-  const url = `${serviceEndpoint}${storesURI}/${city}`;
+  const url = `${serviceEndpoint}${storesURI}/city/${city}`;
   const config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/json",
