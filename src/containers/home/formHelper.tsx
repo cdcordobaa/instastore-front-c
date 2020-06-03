@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {} from "@material-ui/core";
 import {
   Send,
   DynamicFeed,
@@ -9,16 +8,29 @@ import {
   LineStyle,
   LocationCity,
   Dialpad,
+  EditLocation,
 } from "@material-ui/icons";
-import styles, { TextField, Button, InputAdornment } from "./styled";
+import styles, {
+  TextField,
+  Button,
+  InputAdornment,
+  Switch,
+  FormControlLabel,
+} from "./styled";
 import AutoCompleteField from "components/autoComplete/autoComplete";
 import { AutoFieldType } from "./HomeView";
 
 export const TextFieldsFormHelper = (props) => {
+  const [checkedB, setCheckedB] = useState(false);
+
+  const handleSwitch = (event: React.ChangeEvent<{}>, checked: boolean) => {
+    setCheckedB(checked);
+  };
+
   return (
     <React.Fragment>
       <styles.HelperLabel>
-        Complete this inofrmation so we can find the Store you need!
+        Complete this information so we can find the Store you need!
       </styles.HelperLabel>
       <TextField
         autoComplete="off"
@@ -36,6 +48,7 @@ export const TextFieldsFormHelper = (props) => {
         required
         error={props.addressValue !== "" && props.destinationObj.city === ""}
         helperText="This can't be empty"
+        placeholder={"The name of your place. i.e. The Batcave"}
       />
 
       <TextField
@@ -50,6 +63,25 @@ export const TextFieldsFormHelper = (props) => {
             </InputAdornment>
           ),
         }}
+        placeholder={"Instructions for delivery. i.e. `bark three times`"}
+      />
+
+      <TextField
+        autoComplete="off"
+        value={props.destinationObj.address}
+        onChange={props.onTextFieldValueChange("address")}
+        label={"Address"}
+        variant="outlined"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <EditLocation />
+            </InputAdornment>
+          ),
+        }}
+        required
+        error={props.addressValue !== "" && props.destinationObj.city === ""}
+        helperText="This can't be empty"
       />
 
       <TextField
@@ -64,6 +96,7 @@ export const TextFieldsFormHelper = (props) => {
             </InputAdornment>
           ),
         }}
+        placeholder={"Aditional info,i.e. building, apto, secret door etc."}
       />
 
       <TextField
@@ -97,6 +130,9 @@ export const TextFieldsFormHelper = (props) => {
             </InputAdornment>
           ),
         }}
+        required
+        error={props.addressValue !== "" && props.destinationObj.state === ""}
+        helperText="This can't be empty"
       />
 
       <TextField
@@ -130,14 +166,62 @@ export const TextFieldsFormHelper = (props) => {
             </InputAdornment>
           ),
         }}
+        required
+        error={
+          props.addressValue !== "" && props.destinationObj.zip_code === ""
+        }
+        helperText="This can't be empty"
       />
+
+      <styles.HelperLabel>
+        Are you done? there are a few filters you can apply
+      </styles.HelperLabel>
+
+      <h3>Man, is midnight and partying</h3>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={checkedB}
+            onChange={handleSwitch}
+            name="checkedB"
+            color="secondary"
+          />
+        }
+        label="Look for Open Stores"
+      />
+      <h3>Just on the toilet, kind of an urgency</h3>
+
+      <FormControlLabel
+        control={
+          <Switch
+            checked={checkedB}
+            onChange={handleSwitch}
+            name="checkedB"
+            color="secondary"
+          />
+        }
+        label="I want it Quickly"
+      />
+      <h3>A pretty domiciliary girl?</h3>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={checkedB}
+            onChange={handleSwitch}
+            name="checkedB"
+            color="secondary"
+          />
+        }
+        label="I want it Near"
+      />
+
       <Button
         variant="contained"
-        color="primary"
+        color="secondary"
         endIcon={<Send />}
         onClick={props.submitForm}
       >
-        Show Me!
+        Find It!
       </Button>
     </React.Fragment>
   );

@@ -3,17 +3,22 @@ import {
   TextField as MTextField,
   InputAdornment as MInputAdornment,
   Button as MButton,
+  Switch as MSwitch,
+  FormControlLabel as MFormControlLabel,
 } from "@material-ui/core";
 
 export const TextField = styled(MTextField)``;
 export const Button = styled(MButton)``;
 export const InputAdornment = styled(MInputAdornment)``;
+export const FormControlLabel = styled(MFormControlLabel)``;
+
+export const Switch = styled(MSwitch)``;
 
 const AutoCompleteFieldWraper = styled.div``;
 const PanelContainer = styled.div`
   display: flex;
   flex-direction: row;
-  min-height: 100vh;
+  max-height: 100vh;
   width: 100%;
 `;
 const HelperLabel = styled.h1`
@@ -32,7 +37,7 @@ const OptionsPanel = styled.div`
     margin: 1rem 2.5rem;
   }
   ${Button} {
-    margin: 1rem 2.5rem;
+    margin: 2.5rem 2.5rem;
     max-width: 12rem;
     background: palevioletred;
   }
@@ -40,7 +45,18 @@ const OptionsPanel = styled.div`
     color: palevioletred;
   }
   ${HelperLabel} {
-    padding: 0 4rem;
+    padding: 0 3rem;
+  }
+
+  h3 {
+    margin: 0 4rem;
+    color: palevioletred;
+    font-size: 1.2rem;
+    text-align: left;
+  }
+  ${FormControlLabel} {
+    margin: 1.5rem 4rem 1rem 4rem;
+    color: palevioletred;
   }
 `;
 
@@ -56,6 +72,9 @@ const Board = styled.div`
   ${AutoCompleteFieldWraper} {
     margin: 1rem 2.5rem;
   }
+  ${Button} {
+    background: palevioletred;
+  }
 `;
 const Title = styled.h1`
   font-size: 1.5rem;
@@ -67,7 +86,7 @@ const MapContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   align-items: stretch;
-  height: 26rem;
+  height: 32rem;
   margin: 4rem 2rem;
   /* decorations */
   border-radius: 41px 41px 41px 41px;

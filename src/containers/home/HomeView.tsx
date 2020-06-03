@@ -288,6 +288,9 @@ const HomeView = ({
               onMarkerMove={onMarkerMove}
             ></Map>
           </styles.MapContainer>
+          <Button variant="contained" color="secondary" onClick={() => {}}>
+            Show me stores in this city
+          </Button>
         </styles.Board>
       </styles.PanelContainer>
     </React.Fragment>
