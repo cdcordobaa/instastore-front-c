@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HomeView from "./HomeView";
-import { IDestination } from "types/destinationTypes";
+import { IDestination, SearchNearestBy } from "types/destinationTypes";
 import { RootState } from "redux/store";
 import { IStore } from "types/storeTypes";
 import { nearestStore } from "redux/ducks/stores/storesSlice";
+import { sentDestinationToApi } from "redux/ducks/destination/destinationSlice";
 
 interface IHomeProps {}
 
@@ -16,6 +17,12 @@ const HomeContainer = ({}: IHomeProps) => {
   );
   const stores: Array<IStore> =
     useSelector((state: RootState) => state.stores.cityStores) || [];
+
+  const nearest: IStore | undefined = useSelector((state: RootState) =>
+    state.destination.filters.searchBy === SearchNearestBy.distance
+      ? state.stores.nearest.distance
+      : state.stores.nearest.time
+  );
 
   const [mapServices, setMapServices] = useState<any>({});
   const [locationLoaded, setLocationLoaded] = useState(false);
@@ -49,12 +56,14 @@ const HomeContainer = ({}: IHomeProps) => {
 
   const onDestinationSubmit = (destination: IDestination) => {
     console.log("the submit is, ", destination);
+    dispatch(sentDestinationToApi(destination));
     dispatch(nearestStore(destination));
   };
 
   return (
     <HomeView
       onApiLoad={setGMapsServices}
+      nearest={nearest}
       mapServices={mapServices}
       destination={destination}
       storesList={stores || []}

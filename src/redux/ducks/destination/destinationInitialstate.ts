@@ -11,8 +11,8 @@ export const initialState: IDestinationDetails = {
     city: "",
     zip_code: "",
     state: "",
-    latitude: 0,
-    longitude: 0,
+    latitude: 4.690884099999999,
+    longitude: -74.860183,
   },
   filters: {
     searchBy: SearchNearestBy.distance,

@@ -57,7 +57,6 @@ export const nearestStore = (destination: IDestination): AppThunk => async (
     };
     let nearest: APIStoreResponse = await getNearestStore(destDetails);
 
-    console.log("near", nearest);
     dispatch(setStoresNearestDistance(nearest.results[0]));
     dispatch(failingAcknowledgement());
   } catch (err) {

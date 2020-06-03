@@ -25,6 +25,7 @@ import { IStore } from "types/storeTypes";
 
 export interface IHomeViewProps {
   destination: IDestination;
+  nearest: IStore | undefined;
   storesList: Array<IStore>;
   mapServices: gMapsServices;
   onApiLoad: (gServices: gMapsServices) => void;
@@ -38,6 +39,7 @@ enum AutoFieldType {
 }
 
 const HomeView = ({
+  nearest,
   destination,
   storesList,
   mapServices,
@@ -53,12 +55,13 @@ const HomeView = ({
     isDraggable: true,
     id: 0,
     coordinates: {
-      latitude: 0,
-      longitude: 0,
+      latitude: destination.latitude,
+      longitude: destination.longitude,
     },
-    name: "You",
+    name: destination.name,
     type: MarkerType.User,
   });
+  const [storeMarkPos, setStoreMarkPos] = useState<IMarker[]>([]);
   const [destinationObj, setDestinationObj] = useState<IDestination>(
     destination
   );
@@ -79,6 +82,47 @@ const HomeView = ({
       }
     }
   }, [mapServices, locationLoaded]);
+
+  useEffect(() => {
+    const storesMarkers: IMarker[] =
+      storesList &&
+      storesList.map((store) => ({
+        isDraggable: false,
+        id: store.id,
+        coordinates: {
+          latitude: store.latitude,
+          longitude: store.longitude,
+        },
+        name: store.name,
+        type: MarkerType.Store,
+      }));
+
+    const nearestMarker: IMarker | undefined = nearest && {
+      isDraggable: false,
+      id: nearest.id,
+      coordinates: {
+        latitude: nearest.latitude,
+        longitude: nearest.longitude,
+      },
+      name: nearest.name,
+      type: MarkerType.Distance,
+    };
+
+    const destMarker = {
+      isDraggable: true,
+      id: 0,
+      coordinates: {
+        latitude: destination.latitude,
+        longitude: destination.longitude,
+      },
+      name: destination.name,
+      type: MarkerType.User,
+    };
+
+    if (nearestMarker) storesMarkers.push(nearestMarker);
+    setStoreMarkPos(storesMarkers);
+    setDestMarkPost(destMarker);
+  }, [storesList, nearest, destination]);
 
   const fillDestinationObj = (geoCodeRespose) => {
     const filterbyType = (type_tag: string) => {
@@ -181,6 +225,9 @@ const HomeView = ({
   };
 
   const setDestinationMarker = (location: IGMapCoordinates) => {
+    if (!destMarkPost) {
+      return;
+    }
     setDestMarkPost({
       ...destMarkPost,
       coordinates: {
@@ -197,7 +244,6 @@ const HomeView = ({
   };
 
   const onTextFieldValueChange = (field: string) => (event) => {
-    console.log("eeeev", event);
     setDestinationObj({
       ...destinationObj,
       [field]: event.target.value,
@@ -368,7 +414,7 @@ const HomeView = ({
           <styles.MapContainer>
             <Map
               userMarker={destMarkPost}
-              storeMarkers={[]}
+              storesMarkers={storeMarkPos}
               onApiLoad={onApiLoad}
               mapCenter={mapCenter}
               onMarkerMove={onMarkerMove}

@@ -22,6 +22,8 @@ export interface IMarker {
 export enum MarkerType {
   Store,
   User,
+  Time,
+  Distance,
 }
 
 export interface gMapsServices {

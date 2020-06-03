@@ -10,7 +10,7 @@ import {
 
 interface IMapWrapperProps {
   userMarker: IMarker;
-  storeMarkers: Array<IMarker>;
+  storesMarkers: Array<IMarker>;
   onApiLoad: (gServices: gMapsServices) => void;
   mapCenter: IMapCenter;
   onMarkerMove: (location: IGMapCoordinates) => void;
@@ -19,7 +19,7 @@ interface IMapWrapperProps {
 
 const MapWrapper: React.FC<IMapWrapperProps> = ({
   userMarker,
-  storeMarkers,
+  storesMarkers,
   onApiLoad,
   mapCenter,
   onMarkerMove,
@@ -34,7 +34,8 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
 
   useEffect(() => {
     setDraggableMarker(userMarker);
-  }, [userMarker]);
+    console.log(userMarker, storesMarkers);
+  }, [userMarker, storesMarkers]);
 
   const onMarkerMoveStart = (childKey: any, childProps: any, mouse: any) => {
     if (draggableMarker.id != childKey) {
@@ -88,12 +89,16 @@ const MapWrapper: React.FC<IMapWrapperProps> = ({
 
   const Markers =
     draggableMarker &&
-    storeMarkers &&
-    [draggableMarker, ...storeMarkers].map((marker: any, index: any) => (
+    storesMarkers &&
+    [
+      draggableMarker,
+      ...storesMarkers,
+    ].map((marker: IMarker, index: number) => (
       <MapMarker
-        key={marker.id}
+        key={index}
         lat={marker.coordinates.latitude}
         lng={marker.coordinates.longitude}
+        type={marker.type}
         onClick={onClick}
       />
     ));
