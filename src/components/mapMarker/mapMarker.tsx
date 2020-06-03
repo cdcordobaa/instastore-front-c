@@ -1,6 +1,12 @@
 import React from "react";
-import { HomeRounded } from "@material-ui/icons";
+import {
+  HomeRounded,
+  StorefrontRounded,
+  MapRounded,
+  AlarmOnRounded,
+} from "@material-ui/icons";
 import styles from "./styled";
+import { MarkerType } from "types/mapTypes";
 
 const MapMarker = (props) => {
   return (
@@ -8,8 +14,12 @@ const MapMarker = (props) => {
       hoover={props.$hover}
       size={2}
       className="lookatme"
+      type={props.type}
     >
-      <HomeRounded />
+      {props.type === MarkerType.User && <HomeRounded />}
+      {props.type === MarkerType.Store && <StorefrontRounded />}
+      {props.type === MarkerType.Distance && <MapRounded />}
+      {props.type === MarkerType.Time && <AlarmOnRounded />}
     </styles.MarkerPosCentered>
   );
 };

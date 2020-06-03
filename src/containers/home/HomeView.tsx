@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { InputAdornment } from "@material-ui/core";
 import {
-  DynamicFeed,
-  AddAlert,
-  Apartment,
-  Public,
-  LineStyle,
-  LocationCity,
-  Dialpad,
-  Send,
-} from "@material-ui/icons";
-import {
   IMapCenter,
   IMarker,
   MarkerType,
@@ -22,6 +12,7 @@ import Map from "components/mapWrapper/mapWrapper";
 import AutoCompleteField from "components/autoComplete/autoComplete";
 import styles, { TextField, Button } from "./styled";
 import { IStore } from "types/storeTypes";
+import { TextFieldsFormHelper, LocalizationFindersHelper } from "./formHelper";
 
 export interface IHomeViewProps {
   destination: IDestination;
@@ -33,7 +24,7 @@ export interface IHomeViewProps {
   locationLoaded: boolean;
 }
 
-enum AutoFieldType {
+export enum AutoFieldType {
   CENTER = "Center",
   ADDRESS = "Address",
 }
@@ -144,6 +135,10 @@ const HomeView = ({
 
     setDestinationObj({ ...destinationObj, ...destination });
     setAddressValue(geoCodeRespose.formatted_address);
+    setMapCenter({
+      ...mapCenter,
+      name: geoCodeRespose.formatted_address.split(",").slice(1).toString(),
+    });
   };
 
   const onCenterFieldSelection = (key: string, option: string) => {
@@ -159,7 +154,6 @@ const HomeView = ({
         lat: location.lat(),
         lng: location.lng(),
       };
-      console.log("is getting here?", key, option);
       if (key === AutoFieldType.CENTER) {
         setMapCenter({
           ...mapCenter,
@@ -184,7 +178,7 @@ const HomeView = ({
     if (!mapServices.maps || !mapServices.autoCompleteService) {
       return undefined;
     }
-
+    console.log("uyyy");
     let searchQuery: any = {
       input: value,
     };
@@ -251,153 +245,27 @@ const HomeView = ({
   };
 
   const textFieldsForm = () => {
+    //Moved this to another file for being too long
     return (
-      <React.Fragment>
-        <TextField
-          autoComplete="off"
-          value={destinationObj.name}
-          onChange={onTextFieldValueChange("name")}
-          label={"Name This Destination"}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <DynamicFeed />
-              </InputAdornment>
-            ),
-          }}
-          required
-          error={addressValue !== "" && destinationObj.city === ""}
-          helperText="This can't be empty"
-        />
-
-        <TextField
-          label={"Add DesCription"}
-          value={destinationObj.description}
-          onChange={onTextFieldValueChange("description")}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <AddAlert />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <TextField
-          label={"Address Two"}
-          value={destinationObj.address_two}
-          onChange={onTextFieldValueChange("address_two")}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Apartment />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <TextField
-          autoComplete="off"
-          label={"Country"}
-          onChange={onTextFieldValueChange("country")}
-          value={destinationObj.country}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Public />
-              </InputAdornment>
-            ),
-          }}
-          required
-          error={addressValue !== "" && destinationObj.city === ""}
-          helperText="This can't be empty"
-        />
-
-        <TextField
-          autoComplete="off"
-          value={destinationObj.state}
-          onChange={onTextFieldValueChange("state")}
-          label={"State"}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LineStyle />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <TextField
-          autoComplete="off"
-          value={destinationObj.city}
-          onChange={onTextFieldValueChange("city")}
-          label={"City"}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LocationCity />
-              </InputAdornment>
-            ),
-          }}
-          required
-          error={addressValue !== "" && destinationObj.city === ""}
-          helperText="This can't be empty"
-        />
-
-        <TextField
-          autoComplete="off"
-          value={destinationObj.zip_code}
-          onChange={onTextFieldValueChange("zip_code")}
-          label={"Zip Code"}
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Dialpad />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          endIcon={<Send />}
-          onClick={submitForm}
-        >
-          Show Me!
-        </Button>
-      </React.Fragment>
+      <TextFieldsFormHelper
+        addressValue={addressValue}
+        destinationObj={destinationObj}
+        onTextFieldValueChange={onTextFieldValueChange}
+        submitForm={submitForm}
+      ></TextFieldsFormHelper>
     );
   };
 
   const localizationFinders = () => {
+    //Moved this to another file for being too long
     return (
-      <React.Fragment>
-        <styles.AutoCompleteFieldWraper>
-          <AutoCompleteField
-            id={AutoFieldType.CENTER}
-            label={"NearBy Place or City"}
-            value={mapCenter.name}
-            onTyping={onAutoCompleFieldOnTyping}
-            onSelection={onCenterFieldSelection}
-          ></AutoCompleteField>
-        </styles.AutoCompleteFieldWraper>
-        <styles.AutoCompleteFieldWraper>
-          <AutoCompleteField
-            id={AutoFieldType.ADDRESS}
-            label={"Address"}
-            value={addressValue}
-            onTyping={onAutoCompleFieldOnTyping}
-            onSelection={onCenterFieldSelection}
-          ></AutoCompleteField>
-        </styles.AutoCompleteFieldWraper>
-      </React.Fragment>
+      <LocalizationFindersHelper
+        addressValue={addressValue}
+        locationLoaded={locationLoaded}
+        mapCenter={mapCenter}
+        onAutoCompleFieldOnTyping={onAutoCompleFieldOnTyping}
+        onCenterFieldSelection={onCenterFieldSelection}
+      ></LocalizationFindersHelper>
     );
   };
 

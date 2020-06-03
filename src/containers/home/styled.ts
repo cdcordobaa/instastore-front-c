@@ -1,14 +1,13 @@
 import styled from "styled-components";
 import {
   TextField as MTextField,
-  InputAdornment,
+  InputAdornment as MInputAdornment,
   Button as MButton,
-  Icon,
 } from "@material-ui/core";
-import MAutoCompleteField from "components/autoComplete/autoComplete";
 
 export const TextField = styled(MTextField)``;
 export const Button = styled(MButton)``;
+export const InputAdornment = styled(MInputAdornment)``;
 
 const AutoCompleteFieldWraper = styled.div``;
 const PanelContainer = styled.div`
@@ -17,18 +16,31 @@ const PanelContainer = styled.div`
   min-height: 100vh;
   width: 100%;
 `;
+const HelperLabel = styled.h1`
+  font-size: 1.5rem;
+  color: palevioletred;
+  text-align: left;
+`;
 
 const OptionsPanel = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 450px;
   overflow-y: scroll;
+  padding: 4rem 0rem;
   ${TextField} {
     margin: 1rem 2.5rem;
   }
   ${Button} {
     margin: 1rem 2.5rem;
     max-width: 12rem;
+    background: palevioletred;
+  }
+  ${InputAdornment} {
+    color: palevioletred;
+  }
+  ${HelperLabel} {
+    padding: 0 4rem;
   }
 `;
 
@@ -76,6 +88,7 @@ const styles = {
   TextField,
   MapContainer,
   AutoCompleteFieldWraper,
+  HelperLabel,
 };
 
 export default styles;
