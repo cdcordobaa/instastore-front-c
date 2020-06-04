@@ -3,8 +3,8 @@ import axios, { AxiosRequestConfig } from "axios";
 import { IStore, APIStoreResponse } from "types/storeTypes";
 import { IDestinationDetails } from "types/destinationTypes";
 
-const serviceEndpoint = "http://localhost:3001";
-const storesURI = "/stores";
+const serviceEndpoint = process.env.REACT_APP_API_URL as string;
+const storesURI = process.env.REACT_APP_API_STORES_URI as string;
 
 export async function getNearestStore(destination: IDestinationDetails) {
   const endpoint = "/nearest";

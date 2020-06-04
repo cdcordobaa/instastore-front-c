@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { APIDestinationResponse, IDestination } from "types/destinationTypes";
 
-const serviceEndpoint = "https://localhost:3001";
-const destinationURI = "/destination";
+const serviceEndpoint = process.env.REACT_APP_API_URL as string;
+const destinationURI = process.env.REACT_APP_API_DESTINATION_URI as string;
 
 export async function postDestination(destination: IDestination) {
   const url = `${serviceEndpoint}${destinationURI}`;
