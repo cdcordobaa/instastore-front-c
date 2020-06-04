@@ -18,6 +18,7 @@ jobs:
           npm install
           npm run-script build
         env:
+          CI: false
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
           REACT_APP_API_STORES_URI: ${{ secrets.REACT_APP_API_STORES_URI }}
           REACT_APP_API_DESTINATION_URI: ${{ secrets.REACT_APP_API_DESTINATION_URI }}
