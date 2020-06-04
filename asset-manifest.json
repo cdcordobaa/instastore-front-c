@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/instastore-front-c/static/css/main.91cec054.chunk.css",
-    "main.js": "/instastore-front-c/static/js/main.2db00074.chunk.js",
-    "main.js.map": "/instastore-front-c/static/js/main.2db00074.chunk.js.map",
+    "main.js": "/instastore-front-c/static/js/main.3196338c.chunk.js",
+    "main.js.map": "/instastore-front-c/static/js/main.3196338c.chunk.js.map",
     "runtime-main.js": "/instastore-front-c/static/js/runtime-main.e9910415.js",
     "runtime-main.js.map": "/instastore-front-c/static/js/runtime-main.e9910415.js.map",
-    "static/js/2.21849ac9.chunk.js": "/instastore-front-c/static/js/2.21849ac9.chunk.js",
-    "static/js/2.21849ac9.chunk.js.map": "/instastore-front-c/static/js/2.21849ac9.chunk.js.map",
+    "static/js/2.8af6ca0e.chunk.js": "/instastore-front-c/static/js/2.8af6ca0e.chunk.js",
+    "static/js/2.8af6ca0e.chunk.js.map": "/instastore-front-c/static/js/2.8af6ca0e.chunk.js.map",
     "index.html": "/instastore-front-c/index.html",
-    "precache-manifest.ff7264de49455426ab9fd3e8656cfc64.js": "/instastore-front-c/precache-manifest.ff7264de49455426ab9fd3e8656cfc64.js",
+    "precache-manifest.1aa5874366575731bc164cef43488118.js": "/instastore-front-c/precache-manifest.1aa5874366575731bc164cef43488118.js",
     "service-worker.js": "/instastore-front-c/service-worker.js",
     "static/css/main.91cec054.chunk.css.map": "/instastore-front-c/static/css/main.91cec054.chunk.css.map",
-    "static/js/2.21849ac9.chunk.js.LICENSE.txt": "/instastore-front-c/static/js/2.21849ac9.chunk.js.LICENSE.txt"
+    "static/js/2.8af6ca0e.chunk.js.LICENSE.txt": "/instastore-front-c/static/js/2.8af6ca0e.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.e9910415.js",
-    "static/js/2.21849ac9.chunk.js",
+    "static/js/2.8af6ca0e.chunk.js",
     "static/css/main.91cec054.chunk.css",
-    "static/js/main.2db00074.chunk.js"
+    "static/js/main.3196338c.chunk.js"
   ]
 }
