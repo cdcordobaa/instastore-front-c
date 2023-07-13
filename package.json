@@ -21,7 +21,7 @@
     "axios": "^0.19.2",
     "google-map-react": "^1.1.7",
     "install": "^0.13.0",
-    "npm": "^6.14.5",
+    "npm": "^9.8.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
